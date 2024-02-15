@@ -1,0 +1,78 @@
+#example deployment and post customsiation for Photon VM
+apiVersion: vmoperator.vmware.com/v1alpha1
+kind: VirtualMachine
+metadata:
+  name: linux-vm
+  namespace: default
+  annotations:
+    vmoperator.vmware.com/image-supported-check: disable
+spec:
+  className: guaranteed-small
+  imageName: 192.168.101.14/jammy-server-cloudimg-amd64.ova
+  powerState: poweredOn
+  networkInterfaces:
+  - networkName: "VM Network"
+    ethernetCardType: "vmxnet3"
+  vmMetadata:
+    configMapName: user-data
+    transport: CloudInit
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: user-data
+    namespace: default
+data:
+  user-data: |
+    #cloud-config
+    write_files:
+      - content: |
+          VECO VM service says Hello World
+        path: /helloworld
+      - content: |
+          network: {config: disabled}
+        path: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+        permissions: '0600'
+      - content: |
+          network:
+            version: 2
+            ethernets:
+              ens192:
+                match: 
+                  driver: vmxnet3
+                dhcp4: true
+        path: /etc/netplan/90-network-config.yaml
+        permissions: '0600'
+    hostname: ubuntu-server
+    manage_etc_hosts: true
+    # network:
+    #   version: 2
+    #   ethernets:
+    #     ens192:
+    #       match: 
+    #         driver: vmxnet3
+    #       dhcp4: true
+    users:
+      - name: ubuntu
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        groups: users, admin
+        home: /home/ubuntu
+        shell: /bin/bash
+        lock_passwd: false
+        ssh-authorized-keys:
+          - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDJleSCxjfah5ivVEbhgxxuspORCbLhYzhLuL19CHKza15MdMvnK5MT4huT1njZBKDrqzwIQULEqnj6FmHoxiz3uLTbttiM5oeaURE3lMBCKHLSBC2/RX0Ss8vJC0Un4n2mf9D3ASTTVwOn07uePEiWTehzpDI2pvI7fXX+6BVLRkMlNU7G50EhOSk9RrkgvtQvB2QIlItlAWAoP2/g4HH9GsJO94ZinDzAEjEzwUa7A2akcDTrwoKQgUimNkNMeWZnT1DA4aNevQspNQ2OBjJzt5dyaUoV1VdF9MMykHG0hFScGMCOSgkIU8l9hK9UlVmAmypMzDUTIP1hMuWlb5lXZ2EtKzYLhnOWvXjUcxLsOxnGTPIPZXBYKYU24lweAvHWGmw/twqDkQuDeor42dSgNowdQFiUthM3MxAHfcRF3wZ+J3L5+r7k5GCXNYbzcuZMTPiL53NoTBJD4OCbHagbWVuzlTgqL2Z2340+7ME+wSR1C5XD2EDFNhM3QlHb30c= sakhter@Saqebs-iMac-Pro.local"
+    ssh_pwauth: true
+    disable_root: false
+    chpasswd:
+      list: |
+         ubuntu:ubuntu
+      expire: False
+    package_update: true
+    packages:
+      - open-vm-tools
+    runcmd:
+     - rm /etc/netplan/50-cloud-init.yaml
+     - netplan generate
+     - netplan apply
+     - systemctl enable open-vm-tools.service
+     - systemctl start open-vm-tools.service
