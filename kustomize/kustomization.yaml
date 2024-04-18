@@ -9,5 +9,5 @@ resources:
   - ../base/linux-ubuntu-vm.yaml
   - ../base/podinfo-kustomization.yaml
   - ../base/podinfo-source.yaml
-  - ../base/web-server.yaml
+  # - ../base/web-server.yaml
   - ../base/ww-gitops-dashboard.yaml
