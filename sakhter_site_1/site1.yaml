@@ -16,7 +16,6 @@ metadata:
   namespace: default
 spec:
   interval: 10m
-  # targetNamespace: default
   sourceRef:
     kind: GitRepository
     name: ecs-infra
