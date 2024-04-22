@@ -1,26 +1,26 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-  name: base  
+  name: ecs-infra  
   namespace: default
 spec:
   interval: 5m
-  url: https://github.com/saqebakhter/keswick.git
+  url: https://github.com/saqebakhter/ecs-infra-example.git
   ref:
     branch: main
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: site1c
+  name: site1c-infra
   namespace: default
 spec:
   interval: 10m
   # targetNamespace: default
   sourceRef:
     kind: GitRepository
-    name: base
-  path: "./kustomize"
+    name: ecs-infra
+  path: "./infra"
   prune: true
   timeout: 1m
   patches:
