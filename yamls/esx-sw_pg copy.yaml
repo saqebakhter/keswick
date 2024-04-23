@@ -19,14 +19,14 @@ spec:
                                 "protocol": "CDP"
                             },
                             "nics": [
-                                "vmnic1"
+                                "vmnic0"
                             ]
                         },
-                        "name": "userSwitch",
+                        "name": "vSwitch0",
                         "policy": {
                             "nic_teaming": {
                                 "active_nics": [
-                                    "vmnic1"
+                                    "vmnic0"
                                 ],
                                 "link_criteria_beacon": "IGNORE",
                                 "notify_switches": true,
@@ -42,6 +42,22 @@ spec:
                         },
                         "port_groups": [
                             {
+                                "name": "Management Network-2",
+                                "policy": {
+                                    "nic_teaming": {
+                                        "active_nics": [
+                                            "vmnic0"
+                                        ],
+                                        "link_criteria_beacon": "IGNORE",
+                                        "notify_switches": true,
+                                        "policy": "LOADBALANCE_SRCID",
+                                        "rolling_order": false,
+                                        "standby_nics": []
+                                    }
+                                },
+                                "vlan_id": 0
+                            },
+                            {
                                 "name": "VM Network-2",
                                 "vlan_id": 0
                             },
@@ -55,4 +71,3 @@ spec:
             }
         }
     }
-    
