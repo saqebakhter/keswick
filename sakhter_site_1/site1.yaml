@@ -9,7 +9,6 @@ spec:
   url: https://github.com/saqebakhter/ecs-infra-example.git
   ref:
     branch: main
-
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
@@ -21,7 +20,6 @@ spec:
   url: https://github.com/saqebakhter/ecs-apps-example.git
   ref:
     branch: main
-
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -36,7 +34,6 @@ spec:
   path: ./infra
   prune: true
   timeout: 1m
-
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
